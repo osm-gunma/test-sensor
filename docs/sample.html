@@ -99,7 +99,7 @@
 
             clearTimeout(timer);
             let result2 = document.getElementById( "result_acc_2" );
-            let interval = 1000
+            let interval = 200
             timer = setTimeout(function () {
               result2.innerHTML = "平均加速度<br />" +
               "X：" + (totalAcceleration.x/totalAcceleration.cnt).toFixed(2) +" m/s^2<br />" +
@@ -111,9 +111,9 @@
               totalAcceleration.cnt = 0
 
               let positionAry = cameraEl.position.split(' ')
-              positionAry[0] += position.x
-              positionAry[1] += position.y
-              positionAry[2] += position.z
+              positionAry[0] += (totalAcceleration.x/totalAcceleration.cnt) * interval/1000 * interval/1000
+              positionAry[1] += (totalAcceleration.y/totalAcceleration.cnt) * interval/1000 * interval/1000
+              positionAry[2] += (totalAcceleration.z/totalAcceleration.cnt) * interval/1000 * interval/1000
               cameraEl.setAttribute('position', positionAry.join(' '));
             }, interval);
           }else{
