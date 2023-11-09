@@ -65,6 +65,7 @@
           const devices = await navigator.mediaDevices.enumerateDevices()
           const cameras = devices.filter(device => device.kind === 'videoinput');
           const backCamera = cameras.find(camera => camera.label.includes('back'));
+	  alert(`backCamera: ${backCamera}`)
           if(backCamera){
             stream = await navigator.mediaDevices.getUserMedia({ video: {width: {ideal: trackWidth},height: {ideal: trackHeight}, deviceId: { exact: backCamera.deviceId }}});
           }else{
