@@ -10,27 +10,28 @@
         width: 320px;
         height: 240px;
       }
-      a-enter-vr-button {
-        display: none !important; /* 非表示にする */
-      }
     </style>
   </head>
   <body>
     <h1>webRTC</h1>
     <button onclick="startCamera()" style="position: relative; z-index: 1;">カメラ起動</button>
     <button onclick="stopCamera()" style="position: relative; z-index: 1;">カメラ停止</button>
+    <button id="resetCamera" style="position: relative; z-index: 1;">視点リセット</button>
     <div id="videoArea" style="position: relative;">
 		  <video id="localVideo" autoplay style="z-index: -100; left: 0; top: 0; position: absolute;"></video>
 	  </div>
 
     <a-scene vr-mode-ui="enabled: false" embedded>
-      <a-box color="#0095DD" position="-3 3 0" rotation="20 40 0">
+      <a-box class="3dModel" color="#0095DD" position="-3 3 0" rotation="20 40 0">
       </a-box>
-      <a-camera position="0 1 4" look-controls-enabled="true">
+      <a-box class="3dModel" color="red" position="-0 0 0" rotation="0 0 0">
+      </a-box>
+      <a-camera id="camera" position="0 1 4" rotation="0 0 0" look-controls-enabled="true">
+      <!-- <a-camera id="camera" position="0 1 4" look-controls-enabled="true"> -->
         <!-- <a-cursor></a-cursor> -->
       </a-camera>
-      <a-entity camera look-controls wasd-controls></a-entity>
-      <a-enter-vr-button></a-enter-vr-button>
+      <!-- <a-entity camera look-controls wasd-controls></a-entity> -->
+      <!-- <a-enter-vr-button></a-enter-vr-button> -->
     </a-scene>
 
     <script>
@@ -40,11 +41,37 @@
       //let trackWidth = "1280"
       //let trackHeight = "960"
       const videoElement = document.getElementById('localVideo')
+      // videoElement.width = `${trackWidth/2}`
+      // videoElement.height = `${trackHeight/2}`
       videoElement.width = `${trackWidth/2}`
       videoElement.height = `${trackHeight/2}`
+      videoElement.style['min-width'] = `${trackWidth/2}px`
+      videoElement.style['min-height'] = `${trackHeight/2}px`
       let videoAreaEl = document.getElementById('videoArea')
+      let modelElAry = document.getElementsByClassName('3dModel')
+      let cameraEl = document.getElementById('camera')
+      let model = {}
+      model.initial = [
+        {
+          position: {x: 0, y: 0, z: 0},
+          rotation: {x: 0, y: 0, z: 0},
+        },
+        {
+          position: {x: -3, y: 3, z: 0},
+          rotation: {x: 20, y: 40, z: 0},
+        },
+      ]
+      camera = {}
+      camera.initial = {
+        position: {x: 0, y: 1, z: 4},
+        rotation: {x: 0, y: 0, z: 0},
+      }
+      let resetCameraBtnEl = document.getElementById('resetCamera')
       init()
       function init(){
+        resetCameraBtnEl.addEventListener("click", () => {
+          resetCameraPosition(cameraEl, camera)
+        });
         const modelNo = 0
         const text = "test"
         let position = {x: 0, y: 0, z: 0}
@@ -65,7 +92,6 @@
           const devices = await navigator.mediaDevices.enumerateDevices()
           const cameras = devices.filter(device => device.kind === 'videoinput');
           const backCamera = cameras.find(camera => camera.label.includes('back'));
-	  alert(`backCamera: ${backCamera}`)
           if(backCamera){
             stream = await navigator.mediaDevices.getUserMedia({ video: {width: {ideal: trackWidth},height: {ideal: trackHeight}, deviceId: { exact: backCamera.deviceId }}});
           }else{
@@ -96,6 +122,17 @@
         overlayDataEl.style.top = position.x + "px"
         overlayDataEl.textContent = `text2`
 	    }
+      function resetCameraPosition(cameraEl, camera){
+        let position = camera.initial.position
+        let rotation = camera.initial.rotation
+        // let cameraObj = cameraEl.object3D
+        // cameraObj.position.set(position.x, position.y, position.z)
+        // cameraObj.rotation.set(rotation.x, rotation.y, rotation.z)
+        cameraEl.setAttribute('position', `${position.x} ${position.y} ${position.z}`);
+        // cameraEl.setAttribute('rotation', `${position.x} ${position.y} ${position.z}`);
+        cameraEl.removeAttribute('look-controls');
+        cameraEl.setAttribute('look-controls', '');
+      }
     </script>
   </body>
 </html>
