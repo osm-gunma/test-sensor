@@ -83,12 +83,6 @@
           interval: 0
         }
         window.addEventListener( "devicemotion", function( event ){
-          /*
-          clearTimeout(timer);
-          timer = setTimeout(function () {
-
-          }, 16);
-          */
           let result1 = document.getElementById( "result_acc" );
           if(event.acceleration && event.acceleration.x){
             let x = event.acceleration.x;
@@ -103,19 +97,25 @@
             totalAcceleration.x += x
             totalAcceleration.y += y
             totalAcceleration.z += z
-          }else{
-            result1.innerHTML = "加速度エラー"
-          }
-        }, { passive: true });
-        let result2 = document.getElementById( "result_acc_2" );
-        timer = setTimeout(function () {
-          result2.innerHTML = "合計加速度<br />" +
+
+            clearTimeout(timer);
+            let result2 = document.getElementById( "result_acc_2" );
+            timer = setTimeout(function () {
+            result2.innerHTML = "合計加速度<br />" +
             "X：" + totalAcceleration.x.toFixed(2) +" m/s^2<br />" +
             "Y：" + totalAcceleration.y.toFixed(2) +" m/s^2<br />" + 
             "Z：" + totalAcceleration.z.toFixed(2) +" m/s^2<br />";
             "interval：" + totalAcceleration.interval.toFixed(2) +" ms<br />";
+            totalAcceleration.x = 0
+            totalAcceleration.y = 0
+            totalAcceleration.z = 0
+            totalAcceleration.interval = 0
+            }, 1000);
+          }else{
+            // result1.innerHTML = "加速度エラー"
+          }
+        }, { passive: true });
 
-        }, 1000);
         const modelNo = 0
         const text = "test"
         let position = {x: 0, y: 0, z: 0}
