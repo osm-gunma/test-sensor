@@ -22,11 +22,13 @@
 	  </div>
 
     <a-scene vr-mode-ui="enabled: false" embedded>
-      <a-box class="3dModel" color="#0095DD" position="-3 3 0" rotation="20 40 0">
-      </a-box>
-      <a-box class="3dModel" color="red" position="-0 0 0" rotation="0 0 0">
-      </a-box>
-      <a-camera id="camera" position="0 1 4" rotation="0 0 0" look-controls-enabled="true">
+      <a-box class="3dModel" color="red" position="-0 0 -3" rotation="0 0 0"></a-box>
+      <a-box class="3dModel" color="blue" position="-3 0 -3" rotation="0 45 0"></a-box>
+      <a-box class="3dModel" color="yellow" position="3 0 -3" rotation="0 0 0"></a-box>
+      <a-box class="3dModel" color="black" position="0 0 3" rotation="0 0 0"></a-box>
+      <a-box class="3dModel" color="green" position="-3 0 3" rotation="0 0 0"></a-box>
+      <a-box class="3dModel" color="pink" position="3 0 3" rotation="0 0 0"></a-box>
+      <a-camera id="camera" position="0 0 0" rotation="0 0 0" look-controls-enabled="true">
       <!-- <a-camera id="camera" position="0 1 4" look-controls-enabled="true"> -->
         <!-- <a-cursor></a-cursor> -->
       </a-camera>
@@ -63,7 +65,7 @@
       ]
       camera = {}
       camera.initial = {
-        position: {x: 0, y: 1, z: 4},
+        position: {x: 0, y: 0, z: 0},
         rotation: {x: 0, y: 0, z: 0},
       }
       let resetCameraBtnEl = document.getElementById('resetCamera')
