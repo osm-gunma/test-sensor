@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>webRTC</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+       /* <a-scene embedded> としないとスタイル変更がきかない */
+      a-scene {
+        width: 320px;
+        height: 240px;
+      }
+      a-enter-vr-button {
+        display: none !important; /* 非表示にする */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>webRTC</h1>
+    <button onclick="startCamera()" style="position: relative; z-index: 1;">カメラ起動</button>
+    <button onclick="stopCamera()" style="position: relative; z-index: 1;">カメラ停止</button>
+    <div id="videoArea" style="position: relative;">
+		  <video id="localVideo" autoplay style="z-index: -100; left: 0; top: 0; position: absolute;"></video>
+	  </div>
+
+    <a-scene vr-mode-ui="enabled: false" embedded>
+      <a-box color="#0095DD" position="-3 3 0" rotation="20 40 0">
+      </a-box>
+      <a-camera position="0 1 4" look-controls-enabled="true">
+        <!-- <a-cursor></a-cursor> -->
+      </a-camera>
+      <a-entity camera look-controls wasd-controls></a-entity>
+      <a-enter-vr-button></a-enter-vr-button>
+    </a-scene>
+
+    <script>
+      let stream;
+      let trackWidth = "640"
+      let trackHeight = "480"
+      //let trackWidth = "1280"
+      //let trackHeight = "960"
+      const videoElement = document.getElementById('localVideo')
+      videoElement.width = `${trackWidth/2}`
+      videoElement.height = `${trackHeight/2}`
+      let videoAreaEl = document.getElementById('videoArea')
+      init()
+      function init(){
+        const modelNo = 0
+        const text = "test"
+        let position = {x: 0, y: 0, z: 0}
+        addOverlayData(modelNo, text, position)
+        setInterval(async() => {
+          if(position.x < 100){
+            position.x += 1
+            position.y += 1
+          }else{
+            position.x -= 1
+            position.y -= 1
+          }
+          updateOverlayData(modelNo, position)
+        }, 1000); // setInterval
+      }
+      async function startCamera() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: {width: {ideal: trackWidth},height: {ideal: trackHeight}}});
+          videoElement.srcObject = stream
+        } catch (error) {
+          alert(error);
+        }
+      }
+      function stopCamera() {
+        if (stream && stream.active) {
+          const tracks = stream.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+      }
+      function addOverlayData(modelNo, text, position){
+        const overlayDataEl = document.createElement('div');
+        overlayDataEl.classList.add(`overlayData`)
+        overlayDataEl.style = `left: ${position.x}px; top: ${position.y}px; position: absolute; background-color: white;;`
+        overlayDataEl.textContent = text
+        videoAreaEl.appendChild(overlayDataEl)
+	    }
+      function updateOverlayData(modelNo, position){
+        const overlayDataElAry = document.getElementsByClassName(`overlayData`)
+        const overlayDataEl = overlayDataElAry[0]
+        overlayDataEl.style.left = position.x + "px"
+        overlayDataEl.style.top = position.x + "px"
+        overlayDataEl.textContent = `text2`
+	    }
+    </script>
+  </body>
+</html>
