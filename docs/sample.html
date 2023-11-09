@@ -111,9 +111,9 @@
               totalAcceleration.cnt = 0
 
               let positionAry = cameraEl.position.split(' ')
-              positionAry[0] += (totalAcceleration.x/totalAcceleration.cnt) * interval/1000 * interval/1000
-              positionAry[1] += (totalAcceleration.y/totalAcceleration.cnt) * interval/1000 * interval/1000
-              positionAry[2] += (totalAcceleration.z/totalAcceleration.cnt) * interval/1000 * interval/1000
+              positionAry[0] += (totalAcceleration.x/totalAcceleration.cnt) * interval/1000 * interval/1000 * 100
+              positionAry[1] += (totalAcceleration.y/totalAcceleration.cnt) * interval/1000 * interval/1000 * 100
+              positionAry[2] += (totalAcceleration.z/totalAcceleration.cnt) * interval/1000 * interval/1000 * 100
               cameraEl.setAttribute('position', positionAry.join(' '));
             }, interval);
           }else{
