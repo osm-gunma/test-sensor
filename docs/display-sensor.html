@@ -55,13 +55,13 @@
           "Y：" + y.toFixed(2) +"(m/s^2)<br />" + 
           "Z：" + z.toFixed(2) +"(m/s^2)<br />";        
       }else{
-        result1.innerHTML = "重力加速度エラー"
+        result1.innerHTML = "重力加速度エラー<br /><br /><br /><br />"
       }
 
       this.chart.data.datasets[0].data.push(1)
       this.chart.data.datasets[0].data.shift()
       console.log(this.chart.data.datasets[0].data)
-      //chart.update();
+      this.chart.update();
 
       var result1 = document.getElementById( "result_acc_2" );
       if(event.acceleration && event.acceleration.x){
@@ -74,7 +74,7 @@
           "Y：" + y.toFixed(2) +"(m/s^2)<br />" + 
           "Z：" + z.toFixed(2) +"(m/s^2)<br />";
       }else{
-        result1.innerHTML = "加速度エラー"
+        result1.innerHTML = "加速度エラー<br /><br /><br /><br />"
       }
     }});
 
@@ -89,7 +89,7 @@
           "beta ：" + beta.toFixed(2)  +"°<br />" + 
           "gamma：" + gamma.toFixed(2) +"°<br />";
       }else{
-        result2.innerHTML = "ジャイロセンサーエラー"
+        result2.innerHTML = "ジャイロセンサーエラー<br /><br /><br /><br />"
       }
     }, false);
 
