@@ -37,7 +37,13 @@
     let chart = new Chart(ctx, {
       type: 'line',
       data: data,
-      options: {}
+      options: {
+        animations: {
+          tension: {
+            duration: 0,
+          }
+        }
+      }
     });
 
   </script>
@@ -64,7 +70,7 @@
       this.chart.data.datasets[0].data.push(1)
       this.chart.data.datasets[0].data.shift()
       dataSetsEl.innerHTML = `${this.chart.data.datasets[0].data}`
-      // this.chart.update();
+      this.chart.update();
 
       var result1 = document.getElementById( "result_acc_2" );
       if(event.acceleration && event.acceleration.x){
