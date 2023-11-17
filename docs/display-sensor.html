@@ -11,6 +11,8 @@
   <div id="result_acc_2"></div>
   <br />
   <div id="result_gyro"></div>
+  <br />
+  <div id="datasets"></div>
 
   <div style="width: 300px; height: 150px;">
     <canvas id="myChart"></canvas>
@@ -45,6 +47,7 @@
     window.addEventListener( "devicemotion", {chart: chart, handleEvent: function( event ){
 
       var result1 = document.getElementById( "result_acc" );
+      let dataSetsEl = document.getElementById( "datasets" );
       if(event.accelerationIncludingGravity && event.accelerationIncludingGravity.x){
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
@@ -60,8 +63,8 @@
 
       this.chart.data.datasets[0].data.push(1)
       this.chart.data.datasets[0].data.shift()
-      console.log(this.chart.data.datasets[0].data)
-      this.chart.update();
+      dataSetsEl.innerHTML = `${this.chart.data.datasets[0].data}`
+      // this.chart.update();
 
       var result1 = document.getElementById( "result_acc_2" );
       if(event.acceleration && event.acceleration.x){
