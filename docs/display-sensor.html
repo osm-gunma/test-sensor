@@ -50,7 +50,9 @@
 
   <script type="text/javascript">
 
+    let timeout;
     window.addEventListener( "devicemotion", {chart: chart, handleEvent: function( event ){
+      clearTimeout(timeout);
 
       var result1 = document.getElementById( "result_acc" );
       let dataSetsEl = document.getElementById( "datasets" );
@@ -70,7 +72,9 @@
       this.chart.data.datasets[0].data.push(1)
       this.chart.data.datasets[0].data.shift()
       dataSetsEl.innerHTML = `${this.chart.data.datasets[0].data}`
-      this.chart.update();
+      timeout = setTimeout(() => {
+        this.chart.update();
+      }, 300);
 
       var result1 = document.getElementById( "result_acc_2" );
       if(event.acceleration && event.acceleration.x){
@@ -101,6 +105,8 @@
         result2.innerHTML = "ジャイロセンサーエラー<br /><br /><br /><br />"
       }
     }, false);
+
+
 
   </script>
 
