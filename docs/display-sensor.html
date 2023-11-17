@@ -13,6 +13,8 @@
   <div id="result_gyro"></div>
   <br />
   <div id="datasets"></div>
+  <br />
+  <button id="data_update" onclick="updateData()">Update Data</button>
 
   <div style="width: 300px; height: 150px;">
     <canvas id="myChart"></canvas>
@@ -38,13 +40,16 @@
       type: 'line',
       data: data,
       options: {
-        /*
-        animations: {
-          tension: {
-            duration: 0,
+        animation: false,
+        scales: {
+          y: {
+            suggestedMin: 0,
+            suggestedMax: 500,
+            ticks: {
+              stepSize: 50
+            }
           }
         }
-        */
       }
     });
 
@@ -107,9 +112,16 @@
     }, false);
 
     setInterval((chart) => {
-        chart.update();
-        console.log(`${chart.data.datasets[0].data}`)
-      }, 200, chart);
+      chart.update();
+      console.log(`${chart.data.datasets[0].data}`)
+    }, 500, chart);
+
+    let cnt = 0
+    function updateData(){
+      chart.data.datasets[0].data.push(cnt++)
+      chart.data.datasets[0].data.shift()
+      chart.update();
+    }
 
   </script>
 
