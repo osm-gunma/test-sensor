@@ -13,11 +13,11 @@
   <div id="result_gyro"></div>
   <br />
   <button id="data_update" onclick="updateData()">Update Data</button>
-  <br />
-  <div id="datasets"></div>
   <div style="width: 300px; height: 150px;">
     <canvas id="myChart"></canvas>
   </div>
+  <br />
+  <div id="datasets"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -102,7 +102,7 @@
       let dataStr = ''
       for(let i=0; i<this.chart.data.datasets[0].data.length; i++){
         dataStr += `${this.chart.data.datasets[0].data[i]}, `
-        if((i+1)%10 === 0){
+        if((i+1)%5 === 0){
           dataStr += `<br />`
         }
       }
