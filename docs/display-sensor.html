@@ -179,8 +179,9 @@
         zChart.data.datasets[0].data.push(nowPositionZ.toFixed(3))
         zChart.data.datasets[0].data.shift()
         chart.update();
+        // printData(chart.data.datasets[0].data, dataSetsEl)
+        printData(azAry, dataSetsEl)
       }
-      printData(zChart, dataSetsEl)
     }, 500, zChart);
 
     let cnt = 0
@@ -190,10 +191,10 @@
       zChart.update();
     }
 
-    function printData(chart, element){
+    function printData(ary, element){
       let dataStr = ''
-      for(let i=0; i<chart.data.datasets[0].data.length; i++){
-        dataStr += `${chart.data.datasets[0].data[i]}, `
+      for(let i=0; i<ary.length; i++){
+        dataStr += `${ary[i]}, `
         if((i+1)%5 === 0){
           dataStr += `<br />`
         }
