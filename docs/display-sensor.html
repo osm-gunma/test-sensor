@@ -88,8 +88,8 @@
             }
           },
           y: {
-            suggestedMin: -5,
-            suggestedMax: 5,
+            suggestedMin: -1,
+            suggestedMax: 1,
             ticks: {
               stepSize: 50,
             }
@@ -138,7 +138,7 @@
           "X：" + x.toFixed(2) +"(m/s^2)<br />" +
           "Y：" + y.toFixed(2) +"(m/s^2)<br />" + 
           "Z：" + z.toFixed(2) +"(m/s^2)<br />" + 
-          "ログ数(z)：" + this.logs.acceleration.z.length +"個<br />" + 
+          "ログ数(z)：" + this.logs.acceleration.z.length +"個<br />"
 
           // this.zChart.data.datasets[0].data.push(z.toFixed(2))
           // this.zChart.data.datasets[0].data.shift()
@@ -147,7 +147,7 @@
 
 
       }else{
-        result1.innerHTML = "加速度エラー<br /><br /><br /><br />"
+        result1.innerHTML = "加速度エラー<br /><br /><br /><br /><br />"
       }
 
       let dataStr = ''
@@ -179,13 +179,13 @@
     const motionZ = new UniformAccelerationLinearMotion()
 
     setInterval((chart) => {
-      if(sensorLogs.acceleration.z.length > 1000){
-        const targetNum = 100
+      const targetNum = 100
+      if(sensorLogs.acceleration.z.length > targetNum){
         const azAry = sensorLogs.acceleration.z.splice(0, targetNum)
         const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
         const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
         const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
-        zChart.data.datasets[0].data.push(nowPositionZ * 100) // cm
+        zChart.data.datasets[0].data.push(nowPositionZ)
         zChart.data.datasets[0].data.shift()
         chart.update();
       }
