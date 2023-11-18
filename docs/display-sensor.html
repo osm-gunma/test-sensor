@@ -23,29 +23,44 @@
   <script>
 
     // 等加速度直線運動
-    class uniformAccelerationLinearMotion{
+    class UniformAccelerationLinearMotion{
       constructor(){
-        this.beforeElapsedTime = 0 // 時間 (s)
-        this.beforeAcceleration = 0 // 加速度(m/s^2)
+        // this.beforeAcceleration = 0 // 加速度(m/s^2)
         this.beforeVelocity = 0 // 速度
         this.beforePosition = 0 // 位置
       }
-      setNowParams(nowAcceleration, interval){
-        this.averageAcceleration = (beforeAcceleration + nowAcceleration) / 2
+      calcParams(nowAcceleration, interval){
+        this.#setNowParams(nowAcceleration, interval)
+        let nowVelocity = this.#calcNowVelocity()
+        let nowPosition = this.#calcNowPosition()
+        this.#updateParams()
+        return {nowVelocity: nowVelocity, nowPosition: nowPosition}
+      }
+      #setNowParams(nowAcceleration, interval){ // intervalは秒単位
+        // this.averageAcceleration = (beforeAcceleration + nowAcceleration) / 2
+        this.nowAcceleration = nowAcceleration
+        this.averageAcceleration = nowAcceleration
         this.interval = interval
       }
-      calcDeltaVelocity(){
+      #calcNowVelocity(){
         let a = this.averageAcceleration
         let t = this.interval
         this.deltaVelocity = a * t
-        return this.deltaVelocity
+        this.nowVelocity = this.deltaVelocity + this.beforeVelocity
+        return this.nowVelocity
       }
-      calcDeltaPosition(){
+      #calcNowPosition(){
         let a = this.averageAcceleration
         let t = this.interval
         let v1 = this.beforeVelocity
         this.deltaPosition = 0.5 * a * t ** 2 + v1 * t
-        return this.deltaPosition
+        this.nowPosition = this.deltaPosition + this.beforePosition
+        return this.nowPosition
+      }
+      #updateParams(){
+        // this.beforeAcceleration = nowAcceleration // 加速度(m/s^2)
+        this.beforeVelocity = this.nowVelocity // 速度
+        this.beforePosition = this.nowPosition // 位置
       }
     }
 
@@ -89,6 +104,7 @@
 
     let sensorLogs = {
       acceleration: {
+        interval: 0, // 秒
         z: []
       }
     }
@@ -124,9 +140,10 @@
           "Z：" + z.toFixed(2) +"(m/s^2)<br />" + 
           "ログ数(z)：" + this.logs.acceleration.z.length +"個<br />" + 
 
-          this.zChart.data.datasets[0].data.push(z.toFixed(2))
-          this.zChart.data.datasets[0].data.shift()
+          // this.zChart.data.datasets[0].data.push(z.toFixed(2))
+          // this.zChart.data.datasets[0].data.shift()
           this.logs.acceleration.z.push(z.toFixed(2))
+          this.logs.acceleration.interval = event.interval / 1000
 
 
       }else{
@@ -159,13 +176,19 @@
       }
     }, false);
 
+    const motionZ = new UniformAccelerationLinearMotion()
+
     setInterval((chart) => {
       if(sensorLogs.acceleration.z.length > 1000){
-        const logs = sensorLogs.acceleration.z.splice(0, 1000)
+        const targetNum = 100
+        const azAry = sensorLogs.acceleration.z.splice(0, targetNum)
+        const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
+        const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
+        const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
+        zChart.data.datasets[0].data.push(nowPositionZ * 100) // cm
+        zChart.data.datasets[0].data.shift()
+        chart.update();
       }
-
-      chart.update();
-      console.log(`${chart.data.datasets[0].data}`)
     }, 500, zChart);
 
     let cnt = 0
