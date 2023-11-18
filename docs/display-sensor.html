@@ -22,6 +22,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 
+    let dataSetsEl = document.getElementById( "datasets" );
+
     // 等加速度直線運動
     class UniformAccelerationLinearMotion{
       constructor(){
@@ -104,14 +106,13 @@
 
     let sensorLogs = {
       acceleration: {
-        interval: 0, // 秒
-        z: []
+        interval: 0.01, // 秒
+        z: Array(300).fill(0.1)
       }
     }
     window.addEventListener( "devicemotion", {zChart: zChart, logs: sensorLogs, handleEvent: function( event ){
 
       var result1 = document.getElementById( "result_acc" );
-      let dataSetsEl = document.getElementById( "datasets" );
       if(event.accelerationIncludingGravity && event.accelerationIncludingGravity.x){
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
@@ -149,16 +150,6 @@
       }else{
         result1.innerHTML = "加速度エラー<br /><br /><br /><br /><br />"
       }
-
-      let dataStr = ''
-      for(let i=0; i<this.zChart.data.datasets[0].data.length; i++){
-        dataStr += `${this.zChart.data.datasets[0].data[i]}, `
-        if((i+1)%5 === 0){
-          dataStr += `<br />`
-        }
-      }
-      dataSetsEl.innerHTML = dataStr
-
     }});
 
     window.addEventListener( "deviceorientation", function( event ) {
@@ -185,10 +176,11 @@
         const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
         const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
         const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
-        zChart.data.datasets[0].data.push(nowPositionZ)
+        zChart.data.datasets[0].data.push(nowPositionZ.toFixed(3))
         zChart.data.datasets[0].data.shift()
         chart.update();
       }
+      printData(zChart, dataSetsEl)
     }, 500, zChart);
 
     let cnt = 0
@@ -196,6 +188,17 @@
       zChart.data.datasets[0].data.push(cnt++)
       zChart.data.datasets[0].data.shift()
       zChart.update();
+    }
+
+    function printData(chart, element){
+      let dataStr = ''
+      for(let i=0; i<chart.data.datasets[0].data.length; i++){
+        dataStr += `${chart.data.datasets[0].data[i]}, `
+        if((i+1)%5 === 0){
+          dataStr += `<br />`
+        }
+      }
+      element.innerHTML = dataStr
     }
 
   </script>
