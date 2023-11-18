@@ -17,12 +17,15 @@
     <canvas id="z_position_chart"></canvas>
   </div>
   <br />
+  <div id="debug"></div>
+  <br />
   <div id="datasets"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 
     let dataSetsEl = document.getElementById( "datasets" );
+    let debugEl = document.getElementById( "debug" );
 
     // 等加速度直線運動
     class UniformAccelerationLinearMotion{
@@ -169,6 +172,7 @@
 
     const motionZ = new UniformAccelerationLinearMotion()
 
+    let intervalCnt = 0
     setInterval((chart) => {
       const targetNum = 100
       if(sensorLogs.acceleration.z.length > targetNum){
@@ -181,7 +185,8 @@
         chart.update();
         // printData(chart.data.datasets[0].data, dataSetsEl)
         // printData(azAry, dataSetsEl)
-        printData([sensorLogs.acceleration.interval, averageAcceleration, nowPositionZ, nowPositionZ.toFixed(3), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
+        printData(azAry, debugEl)
+        printData([intervalCnt, sensorLogs.acceleration.interval, averageAcceleration, nowPositionZ, nowPositionZ.toFixed(3), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
       }
     }, 500, zChart);
 
