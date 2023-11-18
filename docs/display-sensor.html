@@ -14,44 +14,69 @@
   <br />
   <button id="data_update" onclick="updateData()">Update Data</button>
   <div style="width: 300px; height: 150px;">
-    <canvas id="myChart"></canvas>
+    <canvas id="z_position_chart"></canvas>
   </div>
   <br />
   <div id="datasets"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const ctx = document.getElementById('myChart');
-  
-    const labels = Array.from('abcdefghijabcdefghijabcdefghijabcdefghijabcdefghij');
-    const data = {
-      labels: labels,
-      datasets: [{
-        label: 'My First Dataset',
-        data: Array(50).fill(2.00),
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      }]
-    };
-    
-    let chart = new Chart(ctx, {
+
+    // 等加速度直線運動
+    class uniformAccelerationLinearMotion{
+      constructor(){
+        this.beforeElapsedTime = 0 // 時間 (s)
+        this.beforeAcceleration = 0 // 加速度(m/s^2)
+        this.beforeVelocity = 0 // 速度
+        this.beforePosition = 0 // 位置
+      }
+      setNowParams(nowAcceleration, interval){
+        this.averageAcceleration = (beforeAcceleration + nowAcceleration) / 2
+        this.interval = interval
+      }
+      calcDeltaVelocity(){
+        let a = this.averageAcceleration
+        let t = this.interval
+        this.deltaVelocity = a * t
+        return this.deltaVelocity
+      }
+      calcDeltaPosition(){
+        let a = this.averageAcceleration
+        let t = this.interval
+        let v1 = this.beforeVelocity
+        this.deltaPosition = 0.5 * a * t ** 2 + v1 * t
+        return this.deltaPosition
+      }
+    }
+
+    const zCtx = document.getElementById('z_position_chart');    
+    let zChart = new Chart(zCtx, {
       type: 'line',
-      data: data,
+      data: {
+        labels: [...Array(50)].map((_, i) => i),
+        datasets: [{
+          label: 'z Position Chart',
+          data: Array(50).fill(0.00),
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      },
       options: {
         animation: false,
         scales: {
           x: {
             ticks: {
-              autoSkip: true,
-              maxTicksLimit: 5,
+              autoSkip: true, // 細かいメモリ非表示
+              maxTicksLimit: 5, // メモリ表示数
+              // stepSize: 50,
             }
           },
           y: {
-            suggestedMin: 0,
+            suggestedMin: -5,
             suggestedMax: 5,
             ticks: {
-              stepSize: 50
+              stepSize: 50,
             }
           }
         }
@@ -62,7 +87,7 @@
 
   <script type="text/javascript">
 
-    window.addEventListener( "devicemotion", {chart: chart, handleEvent: function( event ){
+    window.addEventListener( "devicemotion", {zChart: zChart, handleEvent: function( event ){
 
       var result1 = document.getElementById( "result_acc" );
       let dataSetsEl = document.getElementById( "datasets" );
@@ -70,14 +95,16 @@
         var x = event.accelerationIncludingGravity.x;
         var y = event.accelerationIncludingGravity.y;
         var z = event.accelerationIncludingGravity.z;
+        let interval = event.interval;
 
         result1.innerHTML = "重力加速度<br />" +
           "X：" + x.toFixed(2) +"(m/s^2)<br />" +
           "Y：" + y.toFixed(2) +"(m/s^2)<br />" + 
-          "Z：" + z.toFixed(2) +"(m/s^2)<br />";
+          "Z：" + z.toFixed(2) +"(m/s^2)<br />" + 
+          "interval：" + interval +"(ms)<br />"
 
       }else{
-        result1.innerHTML = "重力加速度エラー<br /><br /><br /><br />"
+        result1.innerHTML = "重力加速度エラー<br /><br /><br /><br /><br />"
       }
 
       var result1 = document.getElementById( "result_acc_2" );
@@ -91,17 +118,16 @@
           "Y：" + y.toFixed(2) +"(m/s^2)<br />" + 
           "Z：" + z.toFixed(2) +"(m/s^2)<br />";
 
-          let x2 = x.toFixed(2)
-          this.chart.data.datasets[0].data.push(x2)
-          this.chart.data.datasets[0].data.shift()
+          this.zChart.data.datasets[0].data.push(z.toFixed(2))
+          this.zChart.data.datasets[0].data.shift()
 
       }else{
         result1.innerHTML = "加速度エラー<br /><br /><br /><br />"
       }
 
       let dataStr = ''
-      for(let i=0; i<this.chart.data.datasets[0].data.length; i++){
-        dataStr += `${this.chart.data.datasets[0].data[i]}, `
+      for(let i=0; i<this.zChart.data.datasets[0].data.length; i++){
+        dataStr += `${this.zChart.data.datasets[0].data[i]}, `
         if((i+1)%5 === 0){
           dataStr += `<br />`
         }
@@ -128,13 +154,13 @@
     setInterval((chart) => {
       chart.update();
       console.log(`${chart.data.datasets[0].data}`)
-    }, 500, chart);
+    }, 500, zChart);
 
     let cnt = 0
     function updateData(){
-      chart.data.datasets[0].data.push(cnt++)
-      chart.data.datasets[0].data.shift()
-      chart.update();
+      zChart.data.datasets[0].data.push(cnt++)
+      zChart.data.datasets[0].data.shift()
+      zChart.update();
     }
 
   </script>
