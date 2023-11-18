@@ -180,7 +180,8 @@
         zChart.data.datasets[0].data.shift()
         chart.update();
         // printData(chart.data.datasets[0].data, dataSetsEl)
-        printData(azAry, dataSetsEl)
+        // printData(azAry, dataSetsEl)
+        printData([sensorLogs.acceleration.interval, averageAcceleration, nowPositionZ, nowPositionZ.toFixed(3), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
       }
     }, 500, zChart);
 
