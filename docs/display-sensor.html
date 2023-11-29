@@ -146,7 +146,7 @@
 
           // this.zChart.data.datasets[0].data.push(z.toFixed(2))
           // this.zChart.data.datasets[0].data.shift()
-          this.logs.acceleration.z.push(Number(z.toFixed(2)))
+          this.logs.acceleration.z.push(Number(z.toFixed(3)))
           this.logs.acceleration.interval = event.interval / 1000
 
 
@@ -177,16 +177,20 @@
       const targetNum = 100
       if(sensorLogs.acceleration.z.length > targetNum){
         const azAry = sensorLogs.acceleration.z.splice(0, targetNum)
-        const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
-        const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
-        const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
+        // const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
+        const sumAcceleration = azAry.reduce((sum, num) => sum + num, 0)
+        // const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
+        const zParams = motionZ.calcParams(sumAcceleration, sensorLogs.acceleration.interval * azAry.length)
+        // const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
+        const nowPositionZ = zParams.nowPosition
+        // zChart.data.datasets[0].data.push(Number(nowPositionZ.toFixed(3)))
         zChart.data.datasets[0].data.push(Number(nowPositionZ.toFixed(3)))
         zChart.data.datasets[0].data.shift()
         chart.update();
         // printData(chart.data.datasets[0].data, dataSetsEl)
         // printData(azAry, dataSetsEl)
         printData(azAry.filter(x=>isNaN(x)), debugEl)
-        printData([intervalCnt++, sensorLogs.acceleration.interval, averageAcceleration, nowPositionZ, Number(nowPositionZ.toFixed(3)), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
+        printData([intervalCnt++, sensorLogs.acceleration.interval, sumAcceleration, nowPositionZ, Number(nowPositionZ.toFixed(3)), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
       }
     }, 500, zChart);
 
