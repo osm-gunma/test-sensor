@@ -179,8 +179,9 @@
         const azAry = sensorLogs.acceleration.z.splice(0, targetNum)
         // const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
         const sumAcceleration = azAry.reduce((sum, num) => sum + num, 0)
+        const sumInterval = sensorLogs.acceleration.interval * azAry.length
         // const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
-        const zParams = motionZ.calcParams(sumAcceleration, sensorLogs.acceleration.interval * azAry.length)
+        const zParams = motionZ.calcParams(sumAcceleration, sumInterval)
         // const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
         const nowPositionZ = zParams.nowPosition
         // zChart.data.datasets[0].data.push(Number(nowPositionZ.toFixed(3)))
@@ -190,7 +191,17 @@
         // printData(chart.data.datasets[0].data, dataSetsEl)
         // printData(azAry, dataSetsEl)
         printData(azAry.filter(x=>isNaN(x)), debugEl)
-        printData([intervalCnt++, sensorLogs.acceleration.interval, sumAcceleration, nowPositionZ, Number(nowPositionZ.toFixed(3)), chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]], dataSetsEl)
+        printData(
+          [
+            {key: 'intervalCnt', value: intervalCnt++},
+            {key: 'sumInterval', value: sumInterval + ' s'},
+            {key: 'sumAcceleration', value: sumAcceleration + ' m/s'},
+            {key: 'nowPositionZ', value: nowPositionZ + ' m'},
+            {key: 'Number(nowPositionZ)', value: Number(nowPositionZ.toFixed(3)) + ' m'},
+            {key: 'newChartData', value: chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]},
+          ],
+          dataSetsEl
+        )
       }
     }, 500, zChart);
 
@@ -204,10 +215,8 @@
     function printData(ary, element){
       let dataStr = ''
       for(let i=0; i<ary.length; i++){
-        dataStr += `${ary[i]}, `
-        if((i+1)%5 === 0){
-          dataStr += `<br />`
-        }
+        dataStr += `${ary[i].key}: ${ary[i].value}`
+        dataStr += `<br />`
       }
       element.innerHTML = dataStr
     }
