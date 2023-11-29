@@ -39,6 +39,7 @@
         let nowVelocity = this.#calcNowVelocity()
         let nowPosition = this.#calcNowPosition()
         this.#updateParams()
+        console.log(`nV: ${nowVelocity}, nP: ${nowPosition}`)
         return {nowVelocity: nowVelocity, nowPosition: nowPosition}
       }
       #setNowParams(nowAcceleration, interval){ // intervalは秒単位
@@ -189,7 +190,7 @@
         chart.update();
         // printData(chart.data.datasets[0].data, dataSetsEl)
         // printData(azAry, dataSetsEl)
-        printData(azAry.filter(x=>isNaN(x)), debugEl)
+        printData(azAry.filter(x=>x), debugEl)
         printData(
           [
             {key: 'intervalCnt', value: intervalCnt++},
@@ -214,8 +215,16 @@
     function printData(ary, element){
       let dataStr = ''
       for(let i=0; i<ary.length; i++){
-        dataStr += `${ary[i].key}: ${ary[i].value}`
-        dataStr += `<br />`
+        if(ary[i].key){
+          dataStr += `${ary[i].key}: ${ary[i].value}`
+          dataStr += `<br />`
+        }else{
+          dataStr += `${ary[i]}, `
+          if(i%5 === 0){
+            dataStr += `<br />`
+          }
+        }
+
       }
       element.innerHTML = dataStr
     }
