@@ -177,11 +177,10 @@
       const targetNum = 100
       if(sensorLogs.acceleration.z.length > targetNum){
         const azAry = sensorLogs.acceleration.z.splice(0, targetNum)
-        // const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
-        const sumAcceleration = azAry.reduce((sum, num) => sum + num, 0)
+        const averageAcceleration = azAry.reduce((sum, num) => sum + num, 0) / azAry.length
         const sumInterval = sensorLogs.acceleration.interval * azAry.length
         // const zParams = motionZ.calcParams(averageAcceleration, sensorLogs.acceleration.interval)
-        const zParams = motionZ.calcParams(sumAcceleration, sumInterval)
+        const zParams = motionZ.calcParams(averageAcceleration, sumInterval)
         // const nowPositionZ = zParams.nowPosition * targetNum // m/s^2
         const nowPositionZ = zParams.nowPosition
         // zChart.data.datasets[0].data.push(Number(nowPositionZ.toFixed(3)))
@@ -195,7 +194,7 @@
           [
             {key: 'intervalCnt', value: intervalCnt++},
             {key: 'sumInterval', value: sumInterval + ' s'},
-            {key: 'sumAcceleration', value: sumAcceleration + ' m/s'},
+            {key: 'averageAcceleration', value: averageAcceleration + ' m/s'},
             {key: 'nowPositionZ', value: nowPositionZ + ' m'},
             {key: 'Number(nowPositionZ)', value: Number(nowPositionZ.toFixed(3)) + ' m'},
             {key: 'newChartData', value: chart.data.datasets[0].data[chart.data.datasets[0].data.length-1]},
